@@ -87,7 +87,8 @@ func (c *wsClient) Stop(ctx context.Context) error {
 	c.connMutex.RUnlock()
 
 	if conn != nil {
-		_ = conn.Close()
+		err := conn.Close()
+		fmt.Println("closed connection", err)
 	}
 
 	return c.common.Stop(ctx)
@@ -162,6 +163,7 @@ func (c *wsClient) ensureConnected(ctx context.Context) error {
 		select {
 		case <-timer.C:
 			{
+				fmt.Println("timer.C")
 				if err, retryAfter := c.tryConnectOnce(ctx); err != nil {
 					if errors.Is(err, context.Canceled) {
 						c.common.Logger.Debugf("Client is stopped, will not try anymore.")
@@ -200,6 +202,7 @@ func (c *wsClient) ensureConnected(ctx context.Context) error {
 // If it encounters an error it closes the connection and returns.
 // Will stop and return if Stop() is called (ctx is cancelled, isStopping is set).
 func (c *wsClient) runOneCycle(ctx context.Context) {
+	fmt.Println("runOneCycle")
 	if err := c.ensureConnected(ctx); err != nil {
 		// Can't connect, so can't move forward. This currently happens when we
 		// are being stopped.

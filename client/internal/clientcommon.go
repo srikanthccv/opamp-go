@@ -248,6 +248,7 @@ func (c *ClientCommon) Stop(ctx context.Context) error {
 	cancelFunc()
 
 	if c.Callbacks.InCallback() {
+		fmt.Println("c.Callbacks.InCallback()")
 		// Stop() is called from a callback. We cannot wait and block here
 		// because the c.stoppedSignal may not be set until the callback
 		// returns. This is the case for example when OnMessage callback is
@@ -260,6 +261,7 @@ func (c *ClientCommon) Stop(ctx context.Context) error {
 	// Wait until stopping is finished.
 	select {
 	case <-ctx.Done():
+		fmt.Println("ctx.Done()", ctx.Err())
 		return ctx.Err()
 	case <-c.stoppedSignal:
 	}
