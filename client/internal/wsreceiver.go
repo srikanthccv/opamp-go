@@ -18,7 +18,7 @@ type wsReceiver struct {
 	conn      *websocket.Conn
 	logger    types.Logger
 	sender    *WSSender
-	callbacks types.Callbacks
+	callbacks *CallbacksWrapper
 	processor receivedProcessor
 }
 
@@ -26,7 +26,7 @@ type wsReceiver struct {
 // messages from the server.
 func NewWSReceiver(
 	logger types.Logger,
-	callbacks types.Callbacks,
+	callbacks *CallbacksWrapper,
 	conn *websocket.Conn,
 	sender *WSSender,
 	clientSyncedState *ClientSyncedState,
