@@ -165,6 +165,7 @@ func (c *wsClient) ensureConnected(ctx context.Context) error {
 			{
 				fmt.Println("timer.C")
 				if err, retryAfter := c.tryConnectOnce(ctx); err != nil {
+					fmt.Println(errors.Is(err, context.Canceled), err)
 					if errors.Is(err, context.Canceled) {
 						c.common.Logger.Debugf("Client is stopped, will not try anymore.")
 						return err
