@@ -244,7 +244,7 @@ func (c *ClientCommon) Stop(ctx context.Context) error {
 	cancelFunc := c.runCancel
 	c.isStoppingFlag = true
 	c.isStoppingMutex.Unlock()
-
+	fmt.Println("cancelFunc")
 	cancelFunc()
 
 	if c.Callbacks.InCallback() {
@@ -283,6 +283,7 @@ func (c *ClientCommon) StartConnectAndRun(runner func(ctx context.Context)) {
 	defer c.isStoppingMutex.Unlock()
 
 	if c.isStoppingFlag {
+		fmt.Println("c.isStoppingFlag")
 		// Stop() was called. Don't connect.
 		runCancel()
 		return

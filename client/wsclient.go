@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"sync"
@@ -122,6 +123,7 @@ func (c *wsClient) SetPackageStatuses(statuses *protobufs.PackageStatuses) error
 func (c *wsClient) tryConnectOnce(ctx context.Context) (err error, retryAfter sharedinternal.OptionalDuration) {
 	var resp *http.Response
 	conn, resp, err := c.dialer.DialContext(ctx, c.url.String(), c.requestHeader)
+	fmt.Println(resp, err, c.url.String())
 	if err != nil {
 		if !c.common.IsStopping() {
 			c.common.Callbacks.OnConnectFailed(err)
