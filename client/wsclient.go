@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"sync"
@@ -165,6 +166,9 @@ func (c *wsClient) ensureConnected(ctx context.Context) error {
 			{
 				fmt.Println("timer.C")
 				if err, retryAfter := c.tryConnectOnce(ctx); err != nil {
+					if d, ok := err.(*net.OpError); ok {
+						fmt.Println(d.Err, "yo", errors.Is(d.Err, context.Canceled))
+					}
 					fmt.Println(errors.Is(err, context.Canceled), err)
 					if errors.Is(err, context.Canceled) {
 						c.common.Logger.Debugf("Client is stopped, will not try anymore.")
