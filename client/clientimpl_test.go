@@ -1344,7 +1344,7 @@ func createDownloadSrv(t *testing.T) *httptest.Server {
 	return srv
 }
 
-func createPackageTestCase(name string, downloadSrv *httptest.Server) packageTestCase {
+func createPackageTestCase(name string, downloadSrv *httptest.Server, pkgVersion string) packageTestCase {
 	return packageTestCase{
 		name:            name,
 		errorOnCallback: false,
@@ -1352,7 +1352,7 @@ func createPackageTestCase(name string, downloadSrv *httptest.Server) packageTes
 			Packages: map[string]*protobufs.PackageAvailable{
 				"package1": {
 					Type:    protobufs.PackageType_PackageType_TopLevel,
-					Version: "1.0.0",
+					Version: pkgVersion,
 					File: &protobufs.DownloadableFile{
 						DownloadUrl: downloadSrv.URL + packageFileURL,
 						ContentHash: []byte{4, 5},
@@ -1369,7 +1369,7 @@ func createPackageTestCase(name string, downloadSrv *httptest.Server) packageTes
 					Name:                 "package1",
 					AgentHasVersion:      "1.0.0",
 					AgentHasHash:         []byte{1, 2, 3},
-					ServerOfferedVersion: "1.0.0",
+					ServerOfferedVersion: pkgVersion,
 					ServerOfferedHash:    []byte{1, 2, 3},
 					Status:               protobufs.PackageStatusEnum_PackageStatusEnum_Installed,
 					ErrorMessage:         "",
@@ -1386,22 +1386,24 @@ func createPackageTestCase(name string, downloadSrv *httptest.Server) packageTes
 
 func TestUpdatePackages(t *testing.T) {
 
+	version := "1.0.0"
+
 	downloadSrv := createDownloadSrv(t)
 	defer downloadSrv.Close()
 
 	// A success case.
 	var tests []packageTestCase
-	tests = append(tests, createPackageTestCase("success", downloadSrv))
+	tests = append(tests, createPackageTestCase("success", downloadSrv, version))
 
 	// A case when downloading the file fails because the URL is incorrect.
-	notFound := createPackageTestCase("downloadable file not found", downloadSrv)
+	notFound := createPackageTestCase("downloadable file not found", downloadSrv, version)
 	notFound.available.Packages["package1"].File.DownloadUrl = downloadSrv.URL + "/notfound"
 	notFound.expectedStatus.Packages["package1"].Status = protobufs.PackageStatusEnum_PackageStatusEnum_InstallFailed
 	notFound.expectedStatus.Packages["package1"].ErrorMessage = "cannot download"
 	tests = append(tests, notFound)
 
 	// A case when OnPackagesAvailable callback returns an error.
-	errorOnCallback := createPackageTestCase("error on callback", downloadSrv)
+	errorOnCallback := createPackageTestCase("error on callback", downloadSrv, version)
 	errorOnCallback.expectedError = packageUpdateErrorMsg
 	errorOnCallback.errorOnCallback = true
 	tests = append(tests, errorOnCallback)
