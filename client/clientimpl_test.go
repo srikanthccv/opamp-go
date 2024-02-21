@@ -1408,6 +1408,8 @@ func TestUpdatePackages(t *testing.T) {
 	errorOnCallback.errorOnCallback = true
 	tests = append(tests, errorOnCallback)
 
+	tests = append(tests, createPackageTestCase("success with new version", downloadSrv, "2.0.0"))
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			verifyUpdatePackages(t, test)
