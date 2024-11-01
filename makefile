@@ -74,3 +74,5 @@ install-tools:
 tidy:
 	rm -fr go.sum
 	go mod tidy -compat=1.22.0
+	cd internal/examples && rm -fr go.sum && go mod tidy -compat=1.22.0
+	cd internal/tools && rm -fr go.sum && go mod tidy -compat=1.22.0
