@@ -35,7 +35,7 @@ jobs:
         run: make install-tools
       - name: go mod tidy, make all
         run: |
-          make gotidy && make all
+          make tidy && make all
           git config user.name opentelemetrybot
           git config user.email 107717825+opentelemetrybot@users.noreply.github.com
           echo "git diff --exit-code || (git add . && git commit -m \"go mod tidy, make all\" && git push)"
