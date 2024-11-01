@@ -3,5 +3,6 @@
   "extends": [
     "config:recommended"
   ],
-  "postUpdateOptions": ["gomodTidy"]
+  "postUpdateOptions": ["gomodTidy"],
+  "forkProcessing": "enabled"
 }
